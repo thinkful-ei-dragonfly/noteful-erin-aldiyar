@@ -10,6 +10,8 @@ import config from '../config';
 import './App.css';
 import AddFolder from '../AddFolder/AddFolder';
 import AddNote from '../AddNote/AddNote';
+import ErrorPage from '../ErrorPage/ErrorPage'; 
+
 
 class App extends Component {
     state = {
@@ -50,9 +52,20 @@ class App extends Component {
         })
     }
 
+    handleAddNote = note => {
+        this.setState({
+            notes: [...this.state.notes, note]
+
+        }, () => {
+            console.log(this.state.notes)
+        })
+        // this.props.history
+    }
+
     renderNavRoutes() {
         return (
             <>
+                <ErrorPage>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
                         exact
@@ -64,6 +77,7 @@ class App extends Component {
                 <Route path="/note/:noteId" component={NotePageNav} />
                 <Route path="/add-folder" component={AddFolder} />
                 <Route path="/add-note" component={AddNote} />
+                </ErrorPage>
             </>
         );
     }
@@ -71,6 +85,7 @@ class App extends Component {
     renderMainRoutes() {
         return (
             <>
+              <ErrorPage>
                 {['/', '/folder/:folderId'].map(path => (
                     <Route
                         exact
@@ -80,6 +95,7 @@ class App extends Component {
                     />
                 ))}
                 <Route path="/note/:noteId" component={NotePageMain} />
+              </ErrorPage>
             </>
         );
     }
@@ -90,6 +106,7 @@ class App extends Component {
             folders: this.state.folders,
             deleteNote: this.handleDeleteNote,
             addFolder: this.handleAddFolder,
+            addNote: this.handleAddNote,
         };
         return (
             <ApiContext.Provider value={value}>

@@ -2,7 +2,7 @@ import React from 'react';
 import config from '../config';
 import cuid from 'cuid';
 import ApiContext from '../ApiContext';
-import ValidationError from '../ValidationError/ValidationError';
+// import ValidationError from '../ValidationError/ValidationError';
 
 
 export default class AddFolder extends React.Component {
@@ -14,19 +14,23 @@ export default class AddFolder extends React.Component {
       content: '',
       folder: '',
       value: '',
-      // nameValid: false,
-      // validationMessages: {},
+      nameValid: false,
+      validationMessages: {
+        name: 'Name is Required',
+      },
     }
   }
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault();
+    
     console.log(e.target.addNoteName.value, e.target.addNoteContent.value, e.target.addNoteFolder.value)
     const name = e.target.addNoteName.value;
     const content = e.target.addNoteContent.value;
     const currentDate = new Date();
     const folderId = e.target.addNoteFolder.value;
     console.log(currentDate);
+
     
     fetch(`${config.API_ENDPOINT}/notes`, {
       method: 'POST',
@@ -47,7 +51,7 @@ export default class AddFolder extends React.Component {
         return res.json()
       })
       .then(res => {
-        this.context.addFolder(res)
+        this.context.addNote(res)
       })
       .catch(error => {
         console.error({ error })
@@ -69,41 +73,42 @@ export default class AddFolder extends React.Component {
     console.log(this.state.folder)
   }
 
-  // validateName(name) {
-  //   const nameError = {...this.state.validationMessages}
-  //   let hasError = false;
+  validateName = name => {
+    const validationMessages = {...this.state.validationMessages}
+    let nameValid = true;
 
-  //   if (name.length === 0) {
-  //     nameError.name = 'Name is required';
-  //     hasError = true;
-  //   } else {
-  //     nameError.name = '';
-  //     hasError = false;
-  //   }
+    if (name.length === 0) {
+      validationMessages.name = 'Name is required';
+      nameValid = false;
+      // return;
+    } else {
+      validationMessages.name = '';
+      nameValid = true;
+    }
 
-  //   this.setState({
-  //     validationMessages: nameError,
-  //     nameValid: !hasError
-  //   })
-  // }
+    this.setState({
+      validationMessages,
+      nameValid,
+    })
+  }
 
   render() {
     const mappedOptions = this.context.folders.map(folder => <option value={folder.id} key={folder.id} id={folder.id} name={folder.name}>{folder.name}</option>)
     return(
       <div className='AddNoteForm'>
         <form onSubmit={e =>{
-           this.handleSubmit(e)
+           this.handleSubmit(e);
            this.props.history.push('/')}}>
-          <label htmlFor='addNoteName'>Name of the Note:</label>
-            <input id='addNoteName' type='text' name='addNoteName' className='addNoteName'></input>
-            {/* <ValidationError hasError={!this.state.nameValid} message={this.state.validationMessages.name}/>   */}
+          <label htmlFor='addNoteName'>Name of the Note:
+          {!this.state.nameValid && (<div><p>{this.state.validationMessages.name}</p></div>)}</label>
+            <input id='addNoteName' type='text' name='addNoteName' className='addNoteName' onChange={e => this.setName(e.target.value)}></input>
           <label htmlFor='addNoteContent'>Content:</label>
             <input id='addNoteContent' type='addNoteContent' name='addNoteContent' className='addNoteContent'></input>
-          <label htmlFor='addNoteFolder'>Content:</label>
+          <label htmlFor='addNoteFolder'>Folder Name:</label>
             <select id='addNoteFolder' name='addNoteFolder'>
               {mappedOptions}
             </select>
-          <button type='submit'>Create Note</button>
+          <button type='submit' disabled={!this.state.nameValid}>Create Note</button>
         </form>
       </div>
     )

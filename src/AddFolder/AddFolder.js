@@ -14,7 +14,7 @@ export default class AddFolder extends React.Component {
     }
   }
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault();
     const name = e.target.addFolder.value;
     
@@ -50,7 +50,7 @@ export default class AddFolder extends React.Component {
     return(
       <div className='AddFolderForm'>
         <form onSubmit={e =>{
-           this.handleSubmit(e)
+           this.handleSubmit(e);
            this.props.history.push('/')}}>
           <label htmlFor='addFolder'>Name of the folder</label>
           <input id='addFolder' type='text' name='addFolder' className='addFolder'></input>
