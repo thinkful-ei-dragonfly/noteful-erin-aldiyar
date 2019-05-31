@@ -16,7 +16,7 @@ export default class AddFolder extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const name = this.folderName.current.value;
+    const name = e.target.addFolder.value;
     
     fetch(`${config.API_ENDPOINT}/folders`, {
       method: 'POST',
@@ -53,7 +53,7 @@ export default class AddFolder extends React.Component {
            this.handleSubmit(e)
            this.props.history.push('/')}}>
           <label htmlFor='addFolder'>Name of the folder</label>
-          <input onChange={e=> this.setName(e.target.value)} ref={this.folderName} id='addFolder' type='text' name='addFolder' className='addFolder'></input>
+          <input id='addFolder' type='text' name='addFolder' className='addFolder'></input>
           <button type='submit'>Create folder</button>
         </form>
       </div>
